@@ -26,7 +26,15 @@ export function removeEmptyProps<T = any> (body: T, preserveEmpty: boolean = fal
   return clean
 }
 
-export function slugify (str: string, limit: number = 72): string {
+const SLUGIFY_UNICODE_REGEXP = /[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g
+const SLUGIFY_ASCII_REGEXP = /[^a-zA-Z0-9_\s-]/g
+
+export function slugify (str: string, options?: { limit?: number, unicode?: boolean }): string {
+  let { limit, unicode } = Object.assign({}, options)
+  if (typeof limit !== 'number') limit = 72
+  if (typeof unicode !== 'boolean') unicode = true
+  const regexp = unicode ? SLUGIFY_UNICODE_REGEXP : SLUGIFY_ASCII_REGEXP
+
   str = str.replace(/^\s+|\s+$/g, '') // trim
   str = str.toLowerCase()
 
@@ -38,9 +46,14 @@ export function slugify (str: string, limit: number = 72): string {
     str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
   }
 
-  str = str.replace(/[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g, '') // remove invalid chars
-    .replace(/\s+/g, '-') // collapse whitespace and replace by -
-    .replace(/-+/g, '-') // collapse dashes
+  // remove invalid chars
+  str = str.replace(regexp, '')
+  // remove leading and trailing space
+  str = str.trim()
+  // collapse whitespace and replace by -
+  str = str.replace(/\s+/g, '-')
+  // collapse dashes
+  str = str.replace(/-+/g, '-')
 
   // strip if it is too long
   if (str.length > limit) str = str.substr(0, limit)

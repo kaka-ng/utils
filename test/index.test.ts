@@ -112,7 +112,7 @@ t.test('removeEmptyProps', function (t) {
 })
 
 t.test('slugify', function (t) {
-  t.plan(4)
+  t.plan(7)
 
   t.test('HelloWorld', function (t) {
     t.plan(1)
@@ -136,6 +136,24 @@ t.test('slugify', function (t) {
     t.plan(1)
     const o = slugify('I am a super long string that will exceed the limit hahahahahahahahahaa a')
     t.equal(o, 'i-am-a-super-long-string-that-will-exceed-the-limit-hahahahahahahahahaa')
+  })
+
+  t.test('Include Unicode Character', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃 Subscription Plan 1 Month')
+    t.equal(o, '訂閱計劃-subscription-plan-1-month')
+  })
+
+  t.test('Exclude Unicode Character', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃 Subscription Plan 1 Month', { unicode: false })
+    t.equal(o, 'subscription-plan-1-month')
+  })
+
+  t.test('Limit to 1', function (t) {
+    t.plan(1)
+    const o = slugify('I am a super long string that will exceed the limit hahahahahahahahahaa a', { limit: 1 })
+    t.equal(o, 'i')
   })
 })
 
