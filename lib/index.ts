@@ -29,10 +29,16 @@ export function removeEmptyProps<T = any> (body: T, preserveEmpty: boolean = fal
 const SLUGIFY_UNICODE_REGEXP = /[^a-zA-Z0-9_\u3400-\u9FBF\s-]/g
 const SLUGIFY_ASCII_REGEXP = /[^a-zA-Z0-9_\s-]/g
 
-export function slugify (str: string, options?: { limit?: number, unicode?: boolean }): string {
-  let { limit, unicode } = Object.assign({}, options)
+const SLUGIFY_DEFAULT_GENERATOR = function (): string {
+  // simple slug
+  return Math.floor(Math.random() * 10000000000000000).toString()
+}
+
+export function slugify (str: string, options?: { limit?: number, unicode?: boolean, generator?: () => string }): string {
+  let { limit, unicode, generator } = Object.assign({}, options)
   if (typeof limit !== 'number') limit = 72
   if (typeof unicode !== 'boolean') unicode = true
+  if (typeof generator !== 'function') generator = SLUGIFY_DEFAULT_GENERATOR
   const regexp = unicode ? SLUGIFY_UNICODE_REGEXP : SLUGIFY_ASCII_REGEXP
 
   str = str.replace(/^\s+|\s+$/g, '') // trim
@@ -58,6 +64,8 @@ export function slugify (str: string, options?: { limit?: number, unicode?: bool
   // strip if it is too long
   if (str.length > limit) str = str.substr(0, limit)
   if (str.endsWith('-')) str = str.substr(0, str.length - 1)
+  // if slug is empty we use generator function to create an unique slug
+  if (str.length === 0) return generator()
 
   return str
 }

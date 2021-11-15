@@ -112,7 +112,7 @@ t.test('removeEmptyProps', function (t) {
 })
 
 t.test('slugify', function (t) {
-  t.plan(7)
+  t.plan(9)
 
   t.test('HelloWorld', function (t) {
     t.plan(1)
@@ -154,6 +154,18 @@ t.test('slugify', function (t) {
     t.plan(1)
     const o = slugify('I am a super long string that will exceed the limit hahahahahahahahahaa a', { limit: 1 })
     t.equal(o, 'i')
+  })
+
+  t.test('should use default generator', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃', { unicode: false })
+    t.equal(o.length <= 16, true)
+  })
+
+  t.test('should use custom generator', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃', { unicode: false, generator () { return 'custom' } })
+    t.equal(o, 'custom')
   })
 })
 
