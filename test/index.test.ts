@@ -3,7 +3,7 @@ import { clone, removeEmptyProps, slugify } from '../lib'
 
 t.plan(3)
 t.test('removeEmptyProps', function (t) {
-  t.plan(15)
+  t.plan(16)
   t.test('{}', function (t) {
     t.plan(2)
     const o = removeEmptyProps({})
@@ -22,6 +22,13 @@ t.test('removeEmptyProps', function (t) {
   t.test('{ foo: bar }', function (t) {
     t.plan(2)
     const o = removeEmptyProps({ foo: 'bar' })
+    t.same(o, { foo: 'bar' })
+    t.equal(typeof o, 'object')
+  })
+
+  t.test('{ foo: bar }', function (t) {
+    t.plan(2)
+    const o = removeEmptyProps({ foo: ' bar ' })
     t.same(o, { foo: 'bar' })
     t.equal(typeof o, 'object')
   })
@@ -112,7 +119,7 @@ t.test('removeEmptyProps', function (t) {
 })
 
 t.test('slugify', function (t) {
-  t.plan(9)
+  t.plan(12)
 
   t.test('HelloWorld', function (t) {
     t.plan(1)
@@ -154,6 +161,24 @@ t.test('slugify', function (t) {
     t.plan(1)
     const o = slugify('I am a super long string that will exceed the limit hahahahahahahahahaa a', { limit: 1 })
     t.equal(o, 'i')
+  })
+
+  t.test('should use pinyin', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃', { pinyin: true })
+    t.equal(o, 'ding-yue-ji-hua')
+  })
+
+  t.test('should use pinyin', function (t) {
+    t.plan(1)
+    const o = slugify('訂閱計劃 Subscription Plan 1 Month', { pinyin: true })
+    t.equal(o, 'ding-yue-ji-hua-subscription-plan-1-month')
+  })
+
+  t.test('should use pinyin but all englush', function (t) {
+    t.plan(1)
+    const o = slugify('Subscription Plan 1 Month', { pinyin: true })
+    t.equal(o, 'subscription-plan-1-month')
   })
 
   t.test('should use default generator', function (t) {

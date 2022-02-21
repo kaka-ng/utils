@@ -34,6 +34,9 @@
   },
   "author": "KaKa",
   "license": "GPL-3.0",
+  "dependencies": {
+    "pinyin-pro": "^3.7.2"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/tap": "^15.0.5",
