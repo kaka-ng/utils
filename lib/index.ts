@@ -58,14 +58,6 @@ export function slugify (str: string, options?: { limit?: number, unicode?: bool
   str = str.replace(/^\s+|\s+$/g, '') // trim
   str = str.toLowerCase()
 
-  // remove accents, swap ñ for n, etc
-  const from = 'àáãäâèéëêìíïîòóöôùúüûñç·/_,:;'
-  const to = 'aaaaaeeeeiiiioooouuuunc------'
-
-  for (let i = 0, l = from.length; i < l; i++) {
-    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
-  }
-
   // remove invalid chars
   str = str.replace(regexp, '')
   // transform chinese to pinyin when unicode is enable
@@ -75,6 +67,19 @@ export function slugify (str: string, options?: { limit?: number, unicode?: bool
       str = str.replace(word, pinyin(word, pinyinOption) + '-')
     }
   }
+
+  // remove accents, swap ñ for n, etc
+  str = str
+    .replace(/(ā|á|ǎ|à|ä|â|ã)/g, 'a')
+    .replace(/(ō|ó|ǒ|ò|ö|ô)/g, 'o')
+    .replace(/(ē|é|ě|è|ë|ê)/g, 'e')
+    .replace(/(ī|í|ǐ|ì|ï|î)/g, 'i')
+    .replace(/(ū|ú|ǔ|ù|ü|û)/g, 'u')
+    .replace(/(ǖ|ǘ|ǚ|ǜ)/g, 'u')
+    .replace(/(ń|ň|ǹ|ñ)/g, 'n')
+    .replace(/(ç)/g, 'c')
+    .replace(/(·|\/|_|,|:|;)/g, '-')
+
   // remove leading and trailing space
   str = str.trim()
   // collapse whitespace and replace by -
