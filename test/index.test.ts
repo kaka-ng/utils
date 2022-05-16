@@ -195,7 +195,13 @@ t.test('slugify', function (t) {
 })
 
 t.test('clone', function (t) {
-  t.plan(3)
+  t.plan(7)
+
+  t.test('{ foo: null }', function (t) {
+    t.plan(1)
+    const o = clone({ foo: null })
+    t.same(o, { foo: null })
+  })
 
   t.test('{ foo: string }', function (t) {
     t.plan(1)
@@ -213,5 +219,26 @@ t.test('clone', function (t) {
     t.plan(1)
     const o = clone('foo')
     t.equal(o, 'foo')
+  })
+
+  t.test('{ foo: Date }', function (t) {
+    t.plan(1)
+    const ref = { foo: new Date() }
+    const o = clone(ref)
+    t.same(o, ref)
+  })
+
+  t.test('Map { foo: bar }', function (t) {
+    t.plan(1)
+    const ref = new Map([['foo', 'bar']])
+    const o = clone(ref)
+    t.same(o, ref)
+  })
+
+  t.test('Set { foo }', function (t) {
+    t.plan(1)
+    const ref = new Set(['foo'])
+    const o = clone(ref)
+    t.same(o, ref)
   })
 })

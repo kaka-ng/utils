@@ -3,19 +3,31 @@
 // arr - 32,347,650 ops/sec ±0.97%
 // oth - 165,792,729 ops/sec ±1.97%
 export function clone<T = any> (o: T): T {
-  if (typeof o === 'object' && o !== null && !Array.isArray(o)) {
-    // we ignore built-in object
-    if (o instanceof Date) return o
-    if (o instanceof Set) return o
-    if (o instanceof Map) return o
+  // handle object
+  if (typeof o === 'object') {
+    if (o === null) return o
+    if (Array.isArray(o)) return (o as never as unknown[]).map(clone) as never as T
+    if (o instanceof Date) return new Date(o) as never as T
+    if (o instanceof Set) {
+      const ref = new Set()
+      for (const i of o) {
+        ref.add(clone(i))
+      }
+      return ref as never as T
+    }
+    if (o instanceof Map) {
+      const ref = new Map()
+      for (const [k, i] of o.entries()) {
+        ref.set(k, clone(i))
+      }
+      return ref as never as T
+    }
     const tmp: any = {}
     Object.keys(o).forEach(function (k) {
       tmp[k] = clone((o as any)[k])
     })
     return tmp
-  } else if (typeof o === 'object' && o !== null && Array.isArray(o)) {
-    return (o as never as unknown[]).map(clone) as never as T
-  } else {
-    return o
   }
+  // primitive
+  return o
 }
