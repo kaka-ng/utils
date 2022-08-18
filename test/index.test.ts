@@ -3,7 +3,7 @@ import { clone, removeEmptyProps, slugify } from '../lib'
 
 t.plan(3)
 t.test('removeEmptyProps', function (t) {
-  t.plan(16)
+  t.plan(18)
   t.test('{}', function (t) {
     t.plan(2)
     const o = removeEmptyProps({})
@@ -68,6 +68,15 @@ t.test('removeEmptyProps', function (t) {
     t.equal(typeof o, 'object')
   })
 
+  t.test('{ foo: Date }', function (t) {
+    t.plan(3)
+    const obj = { foo: new Date() }
+    const o = removeEmptyProps(obj)
+    t.same(o, obj)
+    t.equal(typeof o, 'object')
+    t.equal(o.foo instanceof Date, true)
+  })
+
   t.test('{ foo: null }', function (t) {
     t.plan(2)
     const o = removeEmptyProps({ foo: null })
@@ -80,6 +89,15 @@ t.test('removeEmptyProps', function (t) {
     const o = removeEmptyProps({ foo: {} })
     t.same(o, { })
     t.equal(typeof o, 'object')
+  })
+
+  t.test('{ foo: { bar: Date } }', function (t) {
+    t.plan(3)
+    const obj = { foo: { bar: new Date() } }
+    const o = removeEmptyProps(obj)
+    t.same(o, obj)
+    t.equal(typeof o, 'object')
+    t.equal(o.foo.bar instanceof Date, true)
   })
 
   t.test('{ foo: {} }, true', function (t) {
