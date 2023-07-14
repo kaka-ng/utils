@@ -11,7 +11,7 @@ export function removeEmptyProps<T = any> (body: T, preserveEmpty: boolean = fal
         clean[key] = ''
       }
     } else if (typeof body[key] === 'object' && body[key] !== null && !(body[key] instanceof Date)) {
-      const keys = Object.keys(body[key])
+      const keys = Object.keys(body[key] as object)
       if (keys.length > 0) {
         clean[key] = removeEmptyProps(body[key], preserveEmpty, Array.isArray(body[key]))
       } else if (preserveEmpty && keys.length === 0) {
